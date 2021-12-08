@@ -23,9 +23,8 @@ public class PlayerMovement : Singleton<PlayerMovement>
 
     bool isGrounded;
 
-
-    //items
-    public static int Notes01 = 0;
+   
+   
 
 
 
@@ -108,14 +107,14 @@ public class PlayerMovement : Singleton<PlayerMovement>
         {
             Debug.Log("note picked up");
             //ui prompt to open inventory w i
-            Destroy(other.gameObject);
-           /// _I.notes.Add(Note);   list>the note
-            //get the note component of the object you collided with , add to inventory scripts notes list
-            //add the collected note to the inventory scripts notes list(eg enemies list)
-
+            _I.notes.Add(other.gameObject.GetComponent<Note>());
+            _I.notesGO[_I.notes.Count].SetActive(true);
+            _I.notesGO[_I.notes.Count].GetComponent<Note>().note = (other.gameObject.GetComponent<Note>().note);
+            other.gameObject.SetActive(false);
+            //instanstiate a new note button and adds note to the button//getcomponent buttonnotes.note = pickedupnote
+   
         }
     }
-    //need to destroy item
 
 
 }
