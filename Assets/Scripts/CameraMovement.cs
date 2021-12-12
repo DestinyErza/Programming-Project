@@ -9,11 +9,7 @@ public class CameraMovement : MonoBehaviour
     public float xRotation = 0f;
 
 
-    void Start()
-    {
-        //removes cursor from the screen
-        Cursor.lockState = CursorLockMode.Locked;
-    }
+   
 
 
     void Update()
