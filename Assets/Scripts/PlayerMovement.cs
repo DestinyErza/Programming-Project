@@ -28,15 +28,15 @@ public class PlayerMovement : Singleton<PlayerMovement>
 
     bool isGrounded;
 
-   
-   
+
+
 
 
 
 
     void Update()
 
-       
+
     {
         speed = currentspeed;
         //jump checker, only able to jump when on ground
@@ -47,16 +47,16 @@ public class PlayerMovement : Singleton<PlayerMovement>
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
-            
+
         //crouch funtion
-        if(Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.C))
         {
             controller.height = 1f;
-           
-           currentspeed = crouchspeed;
+
+            currentspeed = crouchspeed;
 
         }
-      if(Input.GetKeyUp(KeyCode.C))
+        if (Input.GetKeyUp(KeyCode.C))
         {
             controller.height = 2f;
             currentspeed = walkspeed;
@@ -66,23 +66,23 @@ public class PlayerMovement : Singleton<PlayerMovement>
         {
             currentspeed = runningspeed;
         }
-        if (Input.GetKeyUp(KeyCode.LeftShift ))
+        if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             currentspeed = walkspeed;
         }
 
-            if (isGrounded && velocity.y < 0)
+        if (isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
         }
-           
+
 
 
         //character movement
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-       
+
         Vector3 move = transform.right * x + transform.forward * z;
         controller.Move(move * speed * Time.deltaTime);
 
@@ -108,13 +108,13 @@ public class PlayerMovement : Singleton<PlayerMovement>
     //inventroy//notes
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag ("Note"))
+        if (other.gameObject.CompareTag("Note"))
         {
             //Debug.Log("note picked up");
             //ui prompt to open inventory with i
             text.text = ("Press 'I' to view this note in your inventory");
             //have it dissapear but reappear when recollected,,,,, "   "
-
+            StartCoroutine(ResetText());
 
 
             _I.notes.Add(other.gameObject.GetComponent<Note>());
@@ -122,9 +122,16 @@ public class PlayerMovement : Singleton<PlayerMovement>
             _I.notesGO[_I.notes.Count].GetComponent<Note>().note = (other.gameObject.GetComponent<Note>().note);
             other.gameObject.SetActive(false);
             //instanstiate a new note button and adds note to the button//getcomponent buttonnotes.note = pickedupnote
-   
+
         }
     }
+    //start couritine after being picked up
 
+
+    IEnumerator ResetText()
+    {
+        yield return new WaitForSeconds(2);
+        text.text = "";
+    }
 
 }
