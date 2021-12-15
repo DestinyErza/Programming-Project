@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerMovement : Singleton<PlayerMovement>
 {
@@ -14,6 +15,10 @@ public class PlayerMovement : Singleton<PlayerMovement>
     public float currentspeed;
     public float runningspeed = 10;
     public float walkspeed = 5f;
+
+    //text
+    public TMP_Text text;
+    public float DisappearTime;
 
     Vector3 velocity;
 
@@ -105,8 +110,13 @@ public class PlayerMovement : Singleton<PlayerMovement>
     {
         if (other.gameObject.CompareTag ("Note"))
         {
-            Debug.Log("note picked up");
-            //ui prompt to open inventory w i
+            //Debug.Log("note picked up");
+            //ui prompt to open inventory with i
+            text.text = ("Press 'I' to view this note in your inventory");
+            //have it dissapear but reappear when recollected,,,,, "   "
+
+
+
             _I.notes.Add(other.gameObject.GetComponent<Note>());
             _I.notesGO[_I.notes.Count].SetActive(true);
             _I.notesGO[_I.notes.Count].GetComponent<Note>().note = (other.gameObject.GetComponent<Note>().note);
