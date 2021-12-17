@@ -6,8 +6,7 @@ using UnityEngine;
 public enum EnemyType
 {
     OneHand,
-    TwoHand,
-    Archer
+    TwoHand
 }
 public enum PatrolType
 {
@@ -60,11 +59,7 @@ public class EnemyManager : Singleton<EnemyManager>
     }
 
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 
   void Despawn()
   {
