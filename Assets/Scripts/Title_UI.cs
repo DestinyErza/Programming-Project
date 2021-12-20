@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Title_UI : MonoBehaviour
 {
+
     public void StartGame()
     {
         //loads main scene
@@ -17,6 +18,10 @@ public class Title_UI : MonoBehaviour
     {
         //exits game
         Application.Quit();
+    }
+    public void LoadEndScene()
+    {
+        SceneManager.LoadScene("EndScreen");
     }
 
 }

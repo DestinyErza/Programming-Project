@@ -7,6 +7,8 @@ TagManager:
   - Note
   - Projectile
   - Enemy
+  - Ammo
+  - Reset Point
   layers:
   - Default
   - TransparentFX

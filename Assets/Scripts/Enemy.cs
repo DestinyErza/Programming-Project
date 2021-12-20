@@ -17,8 +17,8 @@ public class Enemy : GameBehaviour
     
     public Transform moveToPos;
     Transform startPos;
-    float baseSpeed = 2f;
-    float baseHealth = 100f;
+    float baseSpeed = 1f;
+    float baseHealth = 10f;
     public float mySpeed;
     public float myHealth;
     Transform endPos;
@@ -28,70 +28,64 @@ public class Enemy : GameBehaviour
     Animator anim;
     NavMeshAgent agent;
     int currentWaypoint;
-    float detectDistance = 10;
-    float detectTime = 5;
-    float attackDistance = 3.5f;
+    float detectDistance = 10f;
+    float detectTime = 5f;
+    float attackDistance = 3f;
     public bool attacking;
+    public AudioSource enemyfootsteps;
+   
 
-    public float distToPlayer;
-    public float distToWaypoint;
 
 
 
     void Start()
     {
+        Setup();
         anim = GetComponent<Animator>();
-        startPos = transform;
+      //  startPos = transform;
        // _EM = FindObjectOfType<EnemyManager>();
         moveToPos = _EM.spawnPoints[Random.Range(0, _EM.spawnPoints.Length)];
         agent = GetComponent<NavMeshAgent>();
         SetNav();
-        Setup();
+       
+
+    }
+
+    void Setup()
+    {
+        switch (myType)
+        {
+            case EnemyType.OneHand:
+                mySpeed = baseSpeed;
+                myHealth = baseHealth;
+                break;
+            case EnemyType.TwoHand:
+                mySpeed = baseSpeed / 2f;
+                myHealth = baseHealth * 2f;
+                break;
+            default:
+                mySpeed = baseSpeed;
+                myHealth = baseHealth;
+                break;
+
+        }
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        void ChangeSpeed(float _speed)
-        {
-            agent.speed = _speed;
-        }
-
-
-
-        void Attack()
-        {
-            if (!attacking)
-            {
-                attacking = true;
-                anim.SetTrigger("Attack" + RandomAnimation());
-                StartCoroutine(ResetAttack());
-            }
-        }
-
-        IEnumerator ResetAttack()
-        {
-            yield return new WaitForSeconds(2);
-            attacking = false;
-        }
-
-        int RandomAnimation()
-        {
-            return Random.Range(1, 4);
-        }
-
+    
         float distToPlayer = Vector3.Distance(transform.position, _P.transform.position);
 
-        if (distToPlayer <= detectDistance)
-        {
-            patrolType = PatrolType.Detect;
-
-        }
         if (distToPlayer <= attackDistance)
         {
             patrolType = PatrolType.Attack;
-
+        }
+        else if (distToPlayer <= detectDistance)
+        {
+            if (patrolType != PatrolType.Chase)
+                patrolType = PatrolType.Detect;
         }
 
         //controls the patrols of enemy between detect attack and chase
@@ -107,6 +101,7 @@ public class Enemy : GameBehaviour
                 ChangeSpeed(mySpeed * 2);
                 if (distToPlayer > detectDistance)
                     patrolType = PatrolType.Detect;
+                
                 break;
             case PatrolType.Detect:
                 agent.SetDestination(transform.position);
@@ -116,17 +111,15 @@ public class Enemy : GameBehaviour
                 {
                     if (distToPlayer <= detectDistance)
                     {
-                        if (patrolType != PatrolType.Chase)
-                        {
-                            detectTime = 5;
-                        }
-
+                        patrolType = PatrolType.Chase;
+                     detectTime = 2f;
                     }
-                    else
-                    {
-                        patrolType = PatrolType.Patrol;
-                        SetNav();
-                    }
+                   
+                else
+                {
+                    patrolType = PatrolType.Patrol;
+                    SetNav();
+                }
                 }
                 break;
 
@@ -134,12 +127,25 @@ public class Enemy : GameBehaviour
                 float distToWaypoint = Vector3.Distance(transform.position, _EM.spawnPoints[currentWaypoint].position);
                 if (distToWaypoint < 1)
                     SetNav();
-                detectTime = 5;
-
+                detectTime = 2f;
+               
 
                 break;
+
+
+           
         }
     }
+    void Attack()
+    {
+        if (!attacking)
+        {
+            attacking = true;
+            anim.SetTrigger("Attack" );
+            StartCoroutine(ResetAttack());
+        }
+    }
+
     void SetNav()
     {
         currentWaypoint = Random.Range(0, _EM.spawnPoints.Length);
@@ -168,15 +174,7 @@ public class Enemy : GameBehaviour
         GameEvents.ReportEnemyDied(gameObject);
     }
 
-    void Attack()
-    {
-        if (!attacking)
-        {
-            attacking = true;
-            anim.SetTrigger("Attack" + RandomAnimation());
-            StartCoroutine(ResetAttack());
-        }
-    }
+    
     IEnumerator ResetAttack()
     {
         yield return new WaitForSeconds(2);
@@ -187,20 +185,5 @@ public class Enemy : GameBehaviour
         return Random.Range(1, 3);
     }
 
-    void Setup()
-    {
-        switch (myType)
-        {
-            case EnemyType.OneHand:
-                mySpeed = baseSpeed;
-                myHealth = baseHealth;
-                break;
-            case EnemyType.TwoHand:
-                mySpeed = baseSpeed / 2f;
-                myHealth = baseHealth * 2f;
-                break;
-        
-        }
-
-    }
+   
 }

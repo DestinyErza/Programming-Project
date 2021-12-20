@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Unity.Audio;
 
 public class PlayerMovement : Singleton<PlayerMovement>
 {
     public CharacterController controller;
-    public int health = 100;
+    public int health = 1;
     public float gravity = -9f;
     public float jumpHeight = 3f;
     //speeds
@@ -28,16 +29,41 @@ public class PlayerMovement : Singleton<PlayerMovement>
 
     bool isGrounded;
 
+    public string inputsound;
+    bool playerismoving;
+    public float walkingspeed;
+
+    //reset stuff
+    //  GameObject resetPoint;
+    // bool resetting = false;
+    //Color originalColour;
+    // private Rigidbody rb;
+
+    public AudioSource audioSource;
 
 
 
+
+    private void Start()
+    {
+       audioSource = GetComponent<AudioSource>();
+   
+    }
 
 
 
     void Update()
-
-
     {
+       // plays footstep sounds with random sound and pitch
+       if(controller.isGrounded == true  && speed >= 4f && audioSource.isPlaying == false )
+        {
+            audioSource.volume = Random.Range(0.5f, 0.8F);
+            audioSource.pitch = Random.Range(0.9f, 1.1f);
+           audioSource.Play();
+        }
+        
+
+     
         speed = currentspeed;
         //jump checker, only able to jump when on ground
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
@@ -48,27 +74,33 @@ public class PlayerMovement : Singleton<PlayerMovement>
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
 
-        //crouch funtion
+        //crouch funtion, reduces height and speed
+
         if (Input.GetKeyDown(KeyCode.C))
         {
             controller.height = 1f;
 
             currentspeed = crouchspeed;
+            
 
         }
         if (Input.GetKeyUp(KeyCode.C))
         {
             controller.height = 2f;
             currentspeed = walkspeed;
+            playerismoving = true;
         }
 
+        //increases speed
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             currentspeed = runningspeed;
+            playerismoving = true;
         }
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             currentspeed = walkspeed;
+            playerismoving = true;
         }
 
         if (isGrounded && velocity.y < 0)
@@ -92,12 +124,17 @@ public class PlayerMovement : Singleton<PlayerMovement>
         controller.Move(velocity * Time.deltaTime);
     }
 
+    
+
+
     public void Hit(int _damage)
     {
+        //does damage to player health//kills
         health -= _damage;
         if (health <= 0)
         {
             GameEvents.ReportPlayerDied(this.gameObject);
+            Debug.Log("player" + health);
         }
         else
         {
@@ -108,12 +145,14 @@ public class PlayerMovement : Singleton<PlayerMovement>
     //inventroy//notes
     private void OnTriggerEnter(Collider other)
     {
+       
+
         if (other.gameObject.CompareTag("Note"))
         {
             //Debug.Log("note picked up");
             //ui prompt to open inventory with i
             text.text = ("Press 'I' to view this note in your inventory");
-            //have it dissapear but reappear when recollected,,,,, "   "
+         
             StartCoroutine(ResetText());
 
 
@@ -125,9 +164,11 @@ public class PlayerMovement : Singleton<PlayerMovement>
 
         }
     }
+    
     //start couritine after being picked up
 
 
+    //resets text after note is picked up but allows it to refresh on new pickup
     IEnumerator ResetText()
     {
         yield return new WaitForSeconds(2);

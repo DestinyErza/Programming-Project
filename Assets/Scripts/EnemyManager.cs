@@ -60,8 +60,7 @@ public class EnemyManager : Singleton<EnemyManager>
 
 
 
-
-  void Despawn()
+    void Despawn()
   {
     //if count goes below 0 return
     if (enemies.Count == 0)

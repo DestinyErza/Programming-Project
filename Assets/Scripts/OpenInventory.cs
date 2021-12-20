@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OpenInventory : MonoBehaviour
+public class OpenInventory : Singleton<OpenInventory>
 {
     public GameObject inventory;
     bool isInventory = false;
@@ -10,7 +10,7 @@ public class OpenInventory : MonoBehaviour
     void Start()
     {
         //removes cursor from the screen, time = running
-        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.None;
         Time.timeScale = 1;
     }
 
@@ -33,13 +33,13 @@ public class OpenInventory : MonoBehaviour
             inventory.SetActive(true);
             Time.timeScale = 0;
             Cursor.lockState = CursorLockMode.None;
+            _P.audioSource.Pause();
         }
         //when inventory is closed the game can be played and the cursor is locked
         else
         {
             inventory.SetActive(false);
             Time.timeScale = 1;
-          //  Cursor.visible = false;
             //removes cursor from the screen
             Cursor.lockState = CursorLockMode.Locked;
         }

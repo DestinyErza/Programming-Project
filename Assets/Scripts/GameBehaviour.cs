@@ -10,4 +10,5 @@ public class GameBehaviour : MonoBehaviour
     protected static UI_Manager _UI { get { return UI_Manager.instance; } }
     protected static PlayerMovement _P { get { return PlayerMovement.instance; } }
     protected static InventoryScript _I { get { return InventoryScript.instance; } }
+    protected static OpenInventory _OI { get { return OpenInventory.instance; } }
 }
